@@ -2,5 +2,5 @@
 .DS_Store
 
 # Builds
-hsp-project/site
+site
 /.project

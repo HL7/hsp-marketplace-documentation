@@ -1,0 +1,81 @@
+{
+    "$schema": "../schema/build.json",
+    "marketplace_url": "https://marketplace-server.logicahealth.org",
+    "product": {
+        "uuid": "deadbeef-7de2-48a7-9de2-f1b481b477b8",
+        "build": {
+            "uuid": "deadbeef-1f0b-4e87-82ee-d45fff86a4d1",
+            "binary": {
+                "registry": "https://index.docker.io/v1/",
+                "image": "p3000/marketplace-product-build-example-cql:latest"
+            },
+            "dependency": []
+        },
+        "facts": {
+            "name": "Example Commercial CQL library.",
+            "pricing": [{
+                    "name": "Evaluation Only",
+                    "kind": "trial",
+                    "rate": "0",
+                    "measure": "access"
+                },
+                {
+                    "name": "Production Use",
+                    "kind": "meter",
+                    "rate": "999.99",
+                    "measure": ""
+                }
+            ],
+            "data_access": [],
+            "customer_service": [{
+                "service": "email",
+                "terms": "Example Only",
+                "url": "mailto:support@example.com"
+            }],
+            "runtime_dependencies": [],
+            "networking": [],
+            "organization": [{
+                "name": "Graphite Health",
+                "contact": "Preston Lee"
+            }],
+            "stewards": [],
+            "licensing": [{
+                "name": "Graphite Developer Program License",
+                "terms": "See URL",
+                "url": "https://www.graphitehealth.io"
+            }],
+            "technology_mime_type": "application/cql.v1.5.1+zip",
+            "domain": [],
+            "cybersecurity": [{
+                "control": "graphite://cybersecurity/controls/d45fff86a4d1",
+                "remark": "Connects to CDN for static data assets."
+            }],
+            "identify_and_access_management": []
+        }
+    },
+    "configuration": [{
+        "default": true,
+        "task": [{
+            "id": "deadbeef-7de2-48a7-9de2-f1b481b477b8",
+            "configuration_id": "deadbeef-7de2-48a7-9de2-f1b481b477b8",
+            "label": "My CDS Hooks Service",
+            "memory_minimum": 128,
+            "memory_maximum": 256,
+            "instances_minimum": 1,
+            "options": [],
+            "ports": [
+                80
+            ],
+            "environment": [{
+                "key": "OPENTELEMETRY_COLLECTOR_URL",
+                "required": true,
+                "description": "OpenTelemetry endpoint for billing, metrics, logging, and product improvement."
+            }]
+        }]
+    }],
+    "provenance": [{
+        "datetime": "2021-11-30 15:18:37.743234 -0700",
+        "attribution": "Vicky Vickerson",
+        "remark": "Submitted for review"
+    }]
+}

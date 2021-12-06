@@ -1,0 +1,4357 @@
+openapi: 3.0.0
+info:
+  description: >-
+    The HL7 Health Services Platform Marketplace (HSPM or Marketplace)
+    specification is a REST API for publication, cataloging, discovering, and
+    deployment of products and executable knowledge into any compliant IT
+    environment in an automated manner. It is similar to an app marketplace for
+    health products in that it manages deployment to a users local
+    infrastructural environment and data context. It is not a flat directory of
+    SMART-on-FHIR and other UI-only applications, but MAY be used for this
+    purpose. A Marketplace can be implemented by vendors, providers, standards
+    developing organizations (SDOs), consortiums, and all manner of parties
+    interested in interoperable products.
+  version: 2.0.0
+  title: Health Services Platform Marketplace Specification
+  termsOfService: 'https://www.logicahealth.org'
+  contact:
+    - name: HSPC
+    - url: https://www.hspconsortium.org/developers/marketplace/
+    - email: membership@HSPConsortium.org
+tags:
+ 
+  - name: Product Services
+    description: >-
+      A Product is a structured declaration of capabilities for a package of
+      executable or consumable content, with release managed in a discrete
+      lifecycle. A CDS Hooks or FHIR Terminology service “ExampleService”
+      developed by vendor “ExampleSoft”, for example, would be declared to a
+      Marketplace instance prior to actual release of the software to establish
+      descriptive text, create screenshots, set standards-related declarations,
+      and other fields.
+
+  
+  - name: Product Operations
+
+  - name: Product Build Services
+  - name: Product Build Dependency Services
+  - name: Product Build Configuration Services
+  - name: Product Build Configuration Task Services
+  - name: Product Build Exposure Services
+  - name: Product License Services
+  - name: Product Logo Services
+  - name: Product Screenshot Services
+  - name: Platform Services
+  - name: Interface Services
+
+    description: >-
+      Marketplace-wide declaration of a standardized – or at least
+      conventionalized – computational integration point. They are not
+      constraints to HL7 standards.  
+  - name: License Services
+    description: >-
+      Licenses are globally declared terms of use, and MAY or MAY NOT be useful
+      in all contexts. As discussed in , this is expected to be customized to
+      the local sales and business model. Implementors and operators only
+      focused on F/OSS Services may be satisfied by the barebones model.
+  - name: Identity Provider Services
+    description: >-
+      An IdentityProvider is a deployment-specific resource containing client
+      configuration information for a resource OpenID Connect
+      authentication/authorization server. This information changes very
+      infrequently. Of special note is the “public_keys” field, which SHOULD be
+      polled and updated automatically. Issuers typically cycle through keys
+      pairs frequently and failing to update them will result in failed User
+      authentication flows.      
+
+  - name: User Services
+    description: >-
+      A distinct person or system with some degree of access or interest to a
+      Marketplace instance.
+  - name: Group Services
+    description: A named collection of Users for purposes of batch Role assignment.
+  - name: Role Services
+    description: A named set of permissions.
+  - name: Role Appointment Services
+  - name: Entitlement Services
+  - name: Entitlement Claim Services
+  - name: Attempt Services
+  
+paths:
+  /licenses:
+    get:
+      tags:
+        - License Services
+      summary: Returns the list of licenses available in the marketplace
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getLicenses
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+     
+        
+            
+    post:
+      tags:
+        - License Services
+      summary: Adds a new license to the marketplace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/License'
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/License'
+        description: License to be added to the marketplace
+        required: true
+      operationId: createLicense
+      responses:
+        '200':
+          description: Add License was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - License Services
+      summary: Updates the license
+      parameters:
+        - in: path
+          name: licenseId
+          required: true
+          description: Id of the license to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/License'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/License'
+        description: License to be added to the marketplace
+        required: true
+      operationId: updateLicense
+      responses:
+        '200':
+          description: True for updated
+     
+        
+            
+                        
+  '/licenses/{licenseId}':
+    get:
+      tags:
+        - License Services
+      summary: Retrieves the license based on license id
+      parameters:
+        - in: path
+          name: licenseId
+          required: true
+          description: Id of the license to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getLicense
+      responses:
+        '200':
+          description: License located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/License'
+
+            application/json:
+              schema:
+                $ref: '#/components/schemas/License'
+ 
+     
+        
+            
+
+    delete:
+      tags:
+        - License Services
+      summary: Deletes the license by Id
+      parameters:
+        - in: path
+          name: licenseId
+          required: true
+          description: Id of the license to delete
+          schema:
+            type: string
+      operationId: deleteLicense
+      responses:
+        '200':
+          description: True if delete was successful
+     
+        
+            
+            
+  /products:
+    get:
+      tags:
+        - Product Services
+      summary: Returns the list of products available in marketplace
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getProducts
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+     
+        
+            
+    post:
+      tags:
+        - Product Services
+      summary: Adds a new product to the marketplace
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+ 
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Product'
+  
+      description: Adds a new product to the marketplace
+      operationId: addProduct
+      responses:
+        '200':
+          description: Add Product was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Product Services
+      summary: Updates the product
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: Update a product to the marketplace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Product'
+ 
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Product'
+ 
+      operationId: updateService
+      responses:
+        '200':
+          description: Update Product was successful
+     
+        
+            
+                        
+  '/products/{productId}/licenses':
+    get:
+      tags:
+        - Product License Services
+      summary: Returns the list of licenses based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getProductLicenses
+      responses:
+        '200':
+          description: Product located using id
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+     
+        
+            
+            
+    post:
+      tags:
+        - Product License Services
+      summary: Adds a new license based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to retrieve
+          schema:
+            type: string
+        - in: query
+          name: licenseId
+          description: licenseId
+          schema:
+            type: string
+            format: uuid
+      description: Adds a new license to the product identified by id
+      operationId: addProductlicense
+      responses:
+        '200':
+          description: Add Product was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+  '/products/{productId}':
+    get:
+      tags:
+        - Product Services
+      summary: Retrieves the product based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getService
+      responses:
+        '200':
+          description: Product located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Product'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+     
+        
+            
+            
+ 
+    delete:
+      tags:
+        - Product Services
+      summary: Deletes the product based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to delete
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteService
+      responses:
+        '200':
+          description: Delete Succesful
+     
+        
+            
+            
+  '/products/{productId}/publish':
+    post:
+      tags:
+        - Product Operations
+      summary: Publishes product based on product Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to publish
+          schema:
+            type: string
+      description: Publishes product based on the product Id
+      operationId: publishService
+      responses:
+        '200':
+          description: Publish Succesful
+     
+        
+            
+            
+  '/products/{productId}/unpublish':
+    post:
+      tags:
+        - Product Operations
+      summary: Unpublishes the product base on the product Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to unpublish
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: unpublishService
+      responses:
+        '200':
+          description: Unpublish Succesful
+     
+        
+            
+            
+  '/products/{productId}/builds':
+    get:
+      tags:
+        - Product Build Services
+      summary: Returns the list of builds based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getBuilds
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+     
+        
+            
+    post:
+      tags:
+        - Product Build Services
+      summary: Adds a new build based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Build'
+ 
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Build'
+  
+      operationId: addBuild
+      responses:
+        '200':
+          description: Add Build Succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+
+    put:
+      tags:
+        - Product Build Services
+      summary: Updates the build based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to update
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Build'
+  
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Build'
+ 
+      operationId: updateBuild
+      responses:
+        '200':
+          description: Update Succesful
+     
+        
+            
+                        
+            
+  '/products/{productId}/builds/{buildId}':
+    get:
+      tags:
+        - Product Build Services
+      summary: Retrieves the build based on build and product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getBuild
+      responses:
+        '200':
+          description: Build located using product Id and build Id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Build'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Build'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Product Build Services
+      summary: Deletes the product based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to delete
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteBuild
+      responses:
+        '200':
+          description: Delete Succesful
+     
+        
+            
+            
+  /interfaces:
+    post:
+      tags:
+        - Interface Services
+      summary: Adds a new interface to the marketplace
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        $ref: '#/components/requestBodies/Interface'
+      description: Adds a new interface to the marketplace
+      operationId: addInterface
+      responses:
+        '200':
+          description: Add Interface was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+           
+            
+    put:
+      tags:
+        - Interface Services
+      summary: Updates the interface
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        $ref: '#/components/requestBodies/Interface'
+      description: ''
+      operationId: updateInterface
+      responses:
+        '200':
+          description: Update Succesful
+     
+        
+            
+                        
+  '/interfaces/{interfaceId}':
+    get:
+      tags:
+        - Interface Services
+      summary: Retrieves the interface based on interface id
+      parameters:
+        - in: path
+          name: interfaceId
+          required: true
+          description: Id of the interface to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getInterface
+      responses:
+        '200':
+          description: Interface
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interface'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Interface'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Interface Services
+      summary: Deletes the interface based on interface id
+      parameters:
+        - in: path
+          name: interfaceId
+          required: true
+          description: Id of the license to delete
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteInterface
+      responses:
+        '200':
+          description: Delete Succesful
+     
+        
+            
+            
+  /users:
+    get:
+      tags:
+        - User Services
+      summary: Returns the list of users
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getUsers
+      responses:
+        '200':
+          description: User located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+     
+        
+            
+              
+    post:
+      tags:
+        - User Services
+      summary: Adds a new user
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      description: Adds a new User
+      operationId: addUser
+      responses:
+        '200':
+          description: Add User was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - User Services
+      summary: Updates the user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the user to update
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: updateUser
+      responses:
+        '200':
+          description: Update User was succesful
+     
+        
+            
+                        
+  '/users/{userId}':
+    get:
+      tags:
+        - User Services
+      summary: Retrieves the user based on user id
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getUser
+      responses:
+        '200':
+          description: User located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+     
+        
+            
+            
+ 
+    delete:
+      tags:
+        - User Services
+      summary: Deletes the license by Id
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the license to delete
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteUser
+      responses:
+        '200':
+          description: Delete User was succesful
+     
+        
+            
+            
+  '/users/{userId}/identities':
+    get:
+      tags:
+        - User Services
+      summary: Returns the list of identities based on user id
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: returns a list of user identities
+          schema:
+            type: string
+      description: ''
+      operationId: getUserIdentities
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Identity'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Identity'
+     
+        
+            
+            
+  '/users/{userId}/platforms':
+    get:
+      tags:
+        - Platform Services
+      summary: Returns the list of platforms based on user id
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the user to update
+          schema:
+            type: string
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getPlatforms
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Platform'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Platform'
+     
+        
+            
+    post:
+      tags:
+        - Platform Services
+      summary: Adds new platform based on user id
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the user to update
+          schema:
+            type: string
+        - in: path
+          name: platformId
+          required: true
+          description: Id of the platform to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: addUserPlatform
+      responses:
+        '200':
+          description: Update User was succesful
+     
+        
+            
+            
+    put:
+      tags:
+        - Platform Services
+      summary: Updates the license
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the user to update
+          schema:
+            type: string
+        - in: path
+          name: platformId
+          required: true
+          description: Id of the platform to update
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: updateUserPlatform
+      responses:
+        '200':
+          description: Update User was succesful
+     
+        
+            
+                        
+  '/users/{userId}/platforms/{platformId}':
+    get:
+      tags:
+        - Platform Services
+      summary: Retrieves the platform based on user and platform id
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: string
+        - in: path
+          name: platformId
+          required: true
+          description: Id of the platform to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getUserPlatform
+      responses:
+        '200':
+          description: User located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Platform'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Platform Services
+      summary: Deletes the license by Id
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: Id of the license to delete
+          schema:
+            type: string
+        - in: path
+          name: platformId
+          required: true
+          description: Id of the platform to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteUserPlatform
+      responses:
+        '200':
+          description: Delete User was succesful
+     
+        
+            
+            
+  /identity_providers:
+    get:
+      tags:
+        - Identity Provider Services
+      summary: >-
+        Returns the list of Identity Providers currently available in marketplace
+        marketplace
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getIdentityProviders
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentityProvider'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentityProvider'
+     
+        
+            
+    post:
+      tags:
+        - Identity Provider Services
+      summary: Adds a new Identity Provider to the marketplace
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        $ref: '#/components/requestBodies/IdentityProvider'
+      description: Identity Provider
+      operationId: addIdentityProvider
+      responses:
+        '200':
+          description: Add Identity Provider was succesful
+     
+        
+            
+            
+    put:
+      tags:
+        - Identity Provider Services
+      summary: Updates license by Id
+      parameters:
+        - in: path
+          name: identityProviderId
+          required: true
+          description: Id of the Identity Provider to update
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: updateIdentityProvider
+      responses:
+        '200':
+          description: Update Identity Provider was succesful
+     
+        
+            
+                        
+  '/identity_providers/{identityProviderId}':
+    get:
+      tags:
+        - Identity Provider Services
+      summary: Retrieves the identity provider based on identity provider id
+      parameters:
+        - in: path
+          name: identityProviderId
+          required: true
+          description: Id of the Identity Provider to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getIdentityProvider
+      responses:
+        '200':
+          description: Identity Provider located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/IdentityProvider'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityProvider'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Identity Provider Services
+      summary: Deletes the license by Id
+      parameters:
+        - in: path
+          name: identityProviderId
+          required: true
+          description: Id of the Identity Provider to delete
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteIdentityProvider
+      responses:
+        '200':
+          description: Delete Identity Provider was succesful
+     
+        
+            
+            
+  /groups:
+    get:
+      tags:
+        - Group Services
+      summary: Returns the list of groups currently available in the marketplace
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getGroups
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+     
+        
+            
+    post:
+      tags:
+        - Group Services
+      summary: Adds a new group to the marketplace
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        $ref: '#/components/requestBodies/Group'
+      description: ''
+      operationId: addGroup
+      responses:
+        '200':
+          description: Add Group was succesful
+     
+        
+            
+            
+    put:
+      tags:
+        - Group Services
+      summary: Updates license by Id
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          description: Id of the license to update
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: updateGroup
+      responses:
+        '200':
+          description: Update Group was succesful
+     
+        
+            
+                        
+  '/groups/{groupId}':
+    get:
+      tags:
+        - Group Services
+      summary: Retrieves the group based on group id
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          description: Id of the group to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getGroup
+      responses:
+        '200':
+          description: Group located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Group'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Group Services
+      summary: Deletes the license by Id
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          description: Id of the license to delete
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteGroup
+      responses:
+        '200':
+          description: Delete Group was succesful
+     
+        
+            
+            
+  /roles:
+    get:
+      tags:
+        - Role Services
+      summary: Returns the list of roles currently available in the marketplace
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getRoles
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+                xml:
+                  name: licenses
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+     
+        
+            
+    post:
+      tags:
+        - Role Services
+      summary: Adds a new Role to the marketplace
+      parameters:
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        $ref: '#/components/requestBodies/Role'
+      description: ''
+      operationId: addRole
+      responses:
+        '200':
+          description: Add Role was succesful
+     
+        
+            
+            
+    put:
+      tags:
+        - Role Services
+      summary: Updates license by Id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the license to update
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: updateRole
+      responses:
+        '200':
+          description: Update Role was succesful
+     
+        
+            
+            
+           
+  '/roles/{roleId}':
+    get:
+      tags:
+        - Role Services
+      summary: Retrieves the role based on role id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the role to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getRole
+      responses:
+        '200':
+          description: Role located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Role'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+     
+        
+            
+            
+    delete:    
+      tags:
+        - Role Services
+      summary: Deletes the license by Id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the license to delete
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteRole
+      responses:
+        '200':
+          description: Delete Role was succesful
+     
+        
+            
+            
+  '/products/{productId}/logos':
+    get:
+      tags:
+        - Product Logo Services
+      summary: Returns the list of logos based on the product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the license to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getLogos
+      responses:
+        '200':
+          description: Logo
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Logo'
+                xml:
+                  name: products
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Logo'
+     
+        
+            
+    post:
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the logo to retrieve
+          schema:
+            type: string
+      tags:
+        - Product Logo Services
+      summary: Adds a new logo based on product id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Logo'
+ 
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Logo'
+  
+        description: Logo to be added to the marketplace
+        required: true
+      operationId: createLogo
+      responses:
+        '200':
+          description: Add Logo was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Product Logo Services
+      summary: Updates logo by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product
+          schema:
+            type: string
+        - in: path
+          name: logoId
+          required: true
+          description: Id of the logo to update
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Logo'
+ 
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Logo'
+ 
+        description: Logo to be added to the marketplace
+        required: true
+      operationId: updateLogo
+      responses:
+        '200':
+          description: True for updated
+     
+        
+            
+                        
+  '/products/{productId}/logos/{logoId}':
+    get:
+      tags:
+        - Product Logo Services
+      summary: Retrieves the logo based on product and logo id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to retrieve logos
+          schema:
+            type: string
+        - in: path
+          name: logoId
+          required: true
+          description: Id of the logo to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getLogo
+      responses:
+        '200':
+          description: Logo located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Logo'
+ 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logo'
+  
+     
+        
+            
+
+    delete:
+      tags:
+        - Product Logo Services
+      summary: Deletes the logo by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product
+          schema:
+            type: string
+        - in: path
+          name: logoId
+          required: true
+          description: Id of the logo to delete
+          schema:
+            type: string
+      operationId: deleteLogo
+      responses:
+        '200':
+          description: True if delete was successful
+     
+        
+            
+            
+  '/products/{productId}/screenshots':
+    get:
+      tags:
+        - Product Screenshot Services
+      summary: Returns the list of screenshots based on product id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to retrieve screenshots from
+          schema:
+            type: string
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getScreenshots
+      responses:
+        '200':
+          description: Screenshot
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Screenshot'
+                xml:
+                  name: products
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Screenshot'
+     
+        
+            
+    post:
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to retrieve
+          schema:
+            type: string
+      tags:
+        - Product Screenshot Services
+      summary: Adds a new screenshots based on product id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Screenshot'
+ 
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Screenshot'
+    
+        description: Screenshot to be added to the marketplace
+        required: true
+      operationId: createScreenshot
+      responses:
+        '200':
+          description: Add Screenshot was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Product Screenshot Services
+      summary: Updates license by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the license to retrieve
+          schema:
+            type: string
+        - in: path
+          name: screenshotId
+          required: true
+          description: Id of the screenshot to retrieve
+          schema:
+            type: string            
+        - in: path
+          name: logoId
+          required: true
+          description: Id of the license to retrieve
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Screenshot'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Screenshot'
+        description: Screenshot to be added to the marketplace
+        required: true
+      operationId: updateScreenshot
+      responses:
+        '200':
+          description: True for updated
+     
+        
+            
+                        
+  '/products/{productId}/screenshots/{screenshotId}':
+    get:
+      tags:
+        - Product Screenshot Services
+      summary: Retrieves the screenshot based on product and screenshot id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the license to retrieve
+          schema:
+            type: string
+        - in: path
+          name: screenshotId
+          required: true
+          description: Id of the screenshot to retrieve
+          schema:
+            type: string            
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getScreenshot
+      responses:
+        '200':
+          description: Screenshot located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Screenshot'
+  
+  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screenshot'
+     
+ 
+     
+        
+            
+
+    delete:
+      tags:
+        - Product Screenshot Services
+      summary: Deletes the license by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the license to delete
+          schema:
+            type: string
+        - in: path
+          name: screenshotId
+          required: true
+          description: Id of the screenshot to retrieve
+          schema:
+            type: string            
+        - in: path
+          name: logoId
+          required: true
+          description: Id of the license to retrieve
+          schema:
+            type: string
+      operationId: deleteScreenshot
+      responses:
+        '200':
+          description: True if delete was successful
+     
+        
+            
+            
+  '/products/{productId}/builds/{buildId}/configurations':
+    get:
+      tags:
+        - Product Build Configuration Services
+      summary: Returns the list of configurations based on product and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getConfigurations
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Configuration'
+                xml:
+                  name: configurations
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Configuration'
+     
+        
+            
+    post:
+      tags:
+        - Product Build Configuration Services
+      summary: Adds a new configuration based on prodcut and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Configuration'
+           
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Configuration'
+      operationId: addConfiguration
+      responses:
+        '200':
+          description: Add Configuration Succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Product Build Configuration Services
+      summary: Updates product by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to update
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: Configuration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Configuration'
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Configuration'
+      operationId: updateConfiguration
+      responses:
+        '200':
+          description: Update Succesful
+     
+        
+            
+                        
+  '/products/{productId}/builds/{buildId}/configurations/{configurationId}':
+    get:
+      tags:
+        - Product Build Configuration Services
+      summary: Retrieves the configuration based on product, build, configuration id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getConfiguration
+      responses:
+        '200':
+          description: Configuration located using product Id and build Id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Product Build Configuration Services
+      summary: Deletes the Configuration by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to delete
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteConfiguration
+      responses:
+        '200':
+          description: Delete Succesful
+     
+        
+            
+            
+  '/products/{productId}/builds/{buildId}/configurations/{configurationId}/tasks':
+    get:
+      tags:
+        - Product Build Configuration Task Services
+      summary: Returns the list of tasks based on product, build, configuration id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string            
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getConfigurationTasks
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+                xml:
+                  name: configurations
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+     
+        
+            
+    post:
+      tags:
+        - Product Build Configuration Task Services
+      summary: Adds a new task based on product, build, and configuration id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string              
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Task'
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Task'
+      operationId: addConfigurationTask
+      responses:
+        '200':
+          description: Add Configuration Succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Product Build Configuration Task Services
+      summary: Updates product by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to update
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: taskId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Task'
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Task'
+      operationId: updateConfigurationTask
+      responses:
+        '200':
+          description: Update Succesful
+     
+        
+            
+                        
+  '/products/{productId}/builds/{buildId}/configurations/{configurationId}/task/{taskId}':
+    get:
+      tags:
+        - Product Build Configuration Task Services
+      summary: Retrieves the task based on product, build, configuration, task id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: taskId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getConfigurationTask
+      responses:
+        '200':
+          description: Configuration located using product Id and build Id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Task'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+     
+        
+            
+            
+ 
+    delete:
+      tags:
+        - Product Build Configuration Task Services
+      summary: Deletes the Configuration by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to delete
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: configurationId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: taskId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteConfigurationTask
+      responses:
+        '200':
+          description: Delete Succesful
+     
+        
+            
+            
+  '/products/{productId}/builds/{buildId}/dependencies':
+    get:
+      tags:
+        - Product Build Dependency Services
+      summary: Returns the list of dependencies based on product and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add dependency
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the build to add dependency
+          schema:
+            type: string            
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getDependencies
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dependency'
+                xml:
+                  name: dependencies
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dependency'
+     
+        
+            
+    post:
+      tags:
+        - Product Build Dependency Services
+      summary: Adds a new dependency based on product and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to update dependency
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the build to update dependency
+          schema:
+            type: string                        
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Dependency'
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Dependency'
+      operationId: addDependency
+      responses:
+        '200':
+          description: Add Dependency Succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Product Build Dependency Services
+      summary: Updates dependency based on product and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to update dependency
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the build to update dependency
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Dependency'
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Dependency'
+      operationId: updateDepenedency
+      responses:
+        '200':
+          description: Update Succesful
+     
+        
+            
+                        
+  '/products/{productId}/builds/{buildId}/dependencies/{dependencyId}':
+    get:
+      tags:
+        - Product Build Dependency Services
+      summary: Retrieves the dependency based on product, build and dependency id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: dependencyId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getDependency
+      responses:
+        '200':
+          description: Dependency located using product Id and build Id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Dependency'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dependency'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Product Build Dependency Services
+      summary: Deletes dependency based on product, build and dependency id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to delete
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: dependencyId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteDependency
+      responses:
+        '200':
+          description: Delete Succesful
+     
+        
+            
+            
+  '/products/{productId}/builds/{buildId}/exposures':
+    get:
+      tags:
+        - Product Build Exposure Services
+      summary: Returns the list of exposures based on product and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string            
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getExposures
+      responses:
+        '200':
+          description: License
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exposure'
+                xml:
+                  name: exposures
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exposure'
+     
+        
+            
+    post:
+      tags:
+        - Product Build Exposure Services
+      summary: Adds a new exposures based on product and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to add build to
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string            
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Exposure'
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Exposure'
+ 
+      operationId: addExposure
+      responses:
+        '200':
+          description: Add Dependency Succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Product Build Exposure Services
+      summary: Updates product by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to update
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: exposureId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Exposure'
+  
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Exposure'
+           
+      operationId: updateExposure
+      responses:
+        '200':
+          description: Update Succesful
+     
+        
+            
+                        
+  '/products/{productId}/builds/{buildId}/exposures/{exposureId}':
+    get:
+      tags:
+        - Product Build Exposure Services
+      summary: Retrieves the exposure based on product and build id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: exposureId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getExposure
+      responses:
+        '200':
+          description: Dependency located using product Id and build Id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Exposure'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exposure'
+     
+        
+            
+            
+
+    delete:
+      tags:
+        - Product Build Exposure Services
+      summary: Deletes the Dependency by Id
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Id of the product to delete
+          schema:
+            type: string
+        - in: path
+          name: buildId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: path
+          name: exposureId
+          required: true
+          description: Id of the products to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          required: false
+          description: format
+          schema:
+            type: string
+      description: ''
+      operationId: deleteExposure
+      responses:
+        '200':
+          description: Delete Succesful
+     
+        
+            
+            
+  /entitlements:
+    get:
+      tags:
+        - Entitlement Services
+      summary: Returns the list of entitlements currently available by the marketplace
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getEntitlements
+      responses:
+        '200':
+          description: Entitlement
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entitlement'
+                xml:
+                  name: entitlements
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entitlement'
+     
+        
+            
+    post:
+      tags:
+        - Entitlement Services
+      summary: Adds a new entitlement to the marketplace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Entitlement'
+     
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Entitlement'
+     
+        description: Entitlement to be added to the marketplace
+        required: true
+      operationId: createEntitlement
+      responses:
+        '200':
+          description: Add Entitlement was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+  '/entitlements/{entitlementId}':
+    get:
+      tags:
+        - Entitlement Services
+      summary: Retrieves the entitlement based on entitlement id 
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the entitlement to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getEntitlement
+      responses:
+        '200':
+          description: Entitlement located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Entitlement'
+   
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entitlement'
+         
+     
+        
+            
+    put:
+      tags:
+        - Entitlement Services
+      summary: Updates entitlement by Id
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the entitlement to retrieve
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entitlement'
+          
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Entitlement'
+           
+        description: Entitlement to be added to the marketplace
+        required: true
+      operationId: updateEntitlement
+      responses:
+        '200':
+          description: True for updated
+     
+        
+            
+            
+    delete:
+      tags:
+        - Entitlement Services
+      summary: Deletes the entitlement by Id
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the entitlement to delete
+          schema:
+            type: string
+      operationId: deleteEntitlement
+      responses:
+        '200':
+          description: True if delete was successful
+     
+        
+            
+            
+  /attempts:
+    get:
+      tags:
+        - Attempt Services
+      summary: Returns the list of attempts currently available in the marketplace
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getAttempts
+      responses:
+        '200':
+          description: Attempt
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attempt'
+                xml:
+                  name: attempts
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attempt'
+     
+        
+          
+    post:
+      tags:
+        - Attempt Services
+      summary: Adds a new attempt to the marketplace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Attempt'
+           
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Attempt'
+            
+        description: Attempt to be added to the marketplace
+        required: true
+      operationId: createAttempt
+      responses:
+        '200':
+          description: Add Attempt was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+          
+    put:
+      tags:
+        - Attempt Services
+      summary: Updates attempt by Id
+      parameters:
+        - in: path
+          name: attemptId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attempt'
+            
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Attempt'
+             
+        description: Attempt to be added to the marketplace
+        required: true
+      operationId: updateAttempt
+      responses:
+        '200':
+          description: True for updated
+     
+        
+            - 'write:attempts'
+            - 'read:attempts'            
+  '/attempts/{attemptId}':
+    get:
+      tags:
+        - Attempt Services
+      summary: Retrieves the attempt based on attempt id
+      parameters:
+        - in: path
+          name: attemptId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getAttempt
+      responses:
+        '200':
+          description: Attempt located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+              
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+              
+     
+        
+            
+
+    delete:
+      tags:
+        - Attempt Services
+      summary: Deletes the attempt by Id
+      parameters:
+        - in: path
+          name: attemptId
+          required: true
+          description: Id of the attempt to delete
+          schema:
+            type: string
+      operationId: deleteAttempt
+      responses:
+        '200':
+          description: True if delete was successful
+     
+        
+            
+            
+  '/roles/{roleId}/appointments':
+    get:
+      tags:
+        - Role Appointment Services
+      summary: Returns the list of appointments based on role id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getAppointments
+      responses:
+        '200':
+          description: Appointment
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+                xml:
+                  name: appointments
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+     
+        
+            
+    post:
+      tags:
+        - Role Appointment Services
+      summary: Adds a new appointments based on role id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Appointment'
+         
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Appointment'
+           
+        description: Appointment to be added to the marketplace
+        required: true
+      operationId: createAppointment
+      responses:
+        '200':
+          description: Add Appointment was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Role Appointment Services
+      summary: Updates appointment specified by role id and appointment id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+        - in: path
+          name: appointmentId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+       
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+           
+        description: Appointment to be added to the marketplace
+        required: true
+      operationId: updateAppointment
+      responses:
+        '200':
+          description: True for updated
+     
+        
+            
+                        
+  '/roles/{roleId}/appointments/{appointmentId}':
+    get:
+      tags:
+        - Role Appointment Services
+      summary: Retrieves the appointment based on role and appointment id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+        - in: path
+          name: appointmentId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getAppointment
+      responses:
+        '200':
+          description: Appointment located using id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+           
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+             
+     
+        
+            
+
+    delete:
+      tags:
+        - Role Appointment Services
+      summary: Deletes the appointment specified by role id and appointment id
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+        - in: path
+          name: appointmentId
+          required: true
+          description: Id of the attempt to retrieve
+          schema:
+            type: string
+      operationId: deleteAppointment
+      responses:
+        '200':
+          description: True if delete was successful
+     
+        
+            
+            
+  '/entitlements/{entitlementId}/claims':
+    get:
+      tags:
+        - Entitlement Claim Services
+      summary: Returns the list of claims based on entitlement id
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      operationId: getClaims
+      responses:
+        '200':
+          description: Claim
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+                xml:
+                  name: claims
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+     
+        
+            
+    post:
+      tags:
+        - Entitlement Claim Services
+      summary: Adds a new claim based on entitlement id
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Claim'
+           
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/Claim'
+          
+        description: Appointment to be added to the marketplace
+        required: true
+      operationId: createClaim
+      responses:
+        '200':
+          description: Add Claim was succesful
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 245b3a76-9768-48ac-907f-0dc45174515f
+     
+        
+            
+            
+    put:
+      tags:
+        - Entitlement Claim Services
+      summary: Updates claim specified by entitlement id and claim id
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+        - in: path
+          name: claimId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Claim'
+            
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Claim'
+            
+        description: Appointment to be added to the marketplace
+        required: true
+      operationId: updateClaim
+      responses:
+        '200':
+          description: True for updated
+     
+        
+            
+                        
+  '/entitlements/{entitlementId}/claims/{claimId}':
+    get:
+      tags:
+        - Entitlement Claim Services
+      summary: Retrieves the claim based on entitlement and claim id
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+        - in: path
+          name: claimId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+        - in: query
+          name: format
+          description: format
+          schema:
+            type: string
+            enum:
+              - xml
+              - json
+      description: ''
+      operationId: getClaim
+      responses:
+        '200':
+          description: Claim located using id and Entitlement id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Claim'
+             
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Claim'
+            
+     
+        
+            
+
+    delete:
+      tags:
+        - Entitlement Claim Services
+      summary: Deletes claim specified by entitlement id and claim id
+      parameters:
+        - in: path
+          name: entitlementId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+        - in: path
+          name: claimId
+          required: true
+          description: Id of the claim to retrieve
+          schema:
+            type: string
+      operationId: deleteClaim
+      responses:
+        '200':
+          description: True if delete was successful
+     
+        
+            
+            
+externalDocs:
+  description: Find out more about Health Services Platform Marketplace
+  url: 'https://www.logicahealth.org'
+servers:
+  - url: 'http://localhost:3000'
+  - url: 'https://marketplace-server-test.logicahealth.org'
+  - url: 'https://marketplace-server.logicahealth.org'
+components:
+  requestBodies:
+    License:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/License'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/License'
+      description: License
+      required: true
+    Product:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Product'
+      description: Product
+      required: true
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/User'
+      description: User
+      required: true
+    Build:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Build'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Build'
+      description: Build
+      required: true
+    Interface:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Interface'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Interface'
+      description: Interface
+      required: true
+    IdentityProvider:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IdentityProvider'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/IdentityProvider'
+      description: Identity Provider
+      required: true
+    Role:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Role'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Role'
+      description: Role
+      required: true
+    Group:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Group'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Group'
+      description: A named collection of Users for purposes of batch Role assignment.
+      required: true
+    Logo:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Logo'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Logo'
+      description: Logo
+      required: true
+    Screenshot:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Screenshot'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Screenshot'
+      description: Screenshot
+      required: true
+    Configuration:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Configuration'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Configuration'
+      description: Configuration
+      required: true
+    Dependency:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Dependency'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Dependency'
+      description: Dependency
+      required: true
+    Exposure:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Exposure'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Exposure'
+      description: Exposure
+      required: true
+    Task:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Task'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Task'
+      description: Task
+      required: true
+    Entitlement:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Entitlement'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Entitlement'
+      description: Entitlement
+      required: true
+    Attempt:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Entitlement'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Entitlement'
+      description: Attempt
+      required: true
+    Appointment:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Appointment'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Appointment'
+      description: Appointment
+      required: true
+    Claim:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Claim'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Claim'
+      description: Claim
+      required: true
+  securitySchemes:
+    licensestore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://licensestore.swagger.io/oauth/authorize'
+          scopes:
+            'write:licenses': modify licenses in your account
+            'read:licenses': read your licenses
+    interfacestore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://interfacestore.swagger.io/oauth/authorize'
+          scopes:
+            'write:interfaces': modify interfaces in your account
+            'read:interfaces': read your interfaces
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+  schemas:
+    Interface:
+      type: object
+      xml:
+        name: Interface
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        url:
+          type: string
+          format: uri
+        version:
+          type: string
+        ordinal:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    User:
+      type: object
+      xml:
+        name: User
+      properties:
+        id:
+          type: string
+          format: uuid
+        familyName:
+          type: string
+        givenName:
+          type: string
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Role:
+      type: object
+      xml:
+        name: role
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        permissions:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Group:
+      type: object
+      xml:
+        name: group
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    License:
+      type: object
+      xml:
+        name: license
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        url:
+          type: string
+          format: url
+        path:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Product:
+      type: object
+      xml:
+        name: product
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        uri:
+          type: string
+          format: uri
+        support:
+          type: string
+        license:
+          type: string
+          format: uuid
+        approved_at:
+          type: string
+          format: date-time
+        visible_from:
+          type: string
+          format: date-time
+        blob:
+          type: string
+          format: binary
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Build:
+      type: object
+      xml:
+        name: build
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        softwareVersion:
+          type: string
+        buildVersion:
+          type: string
+        containerRepository:
+          type: string
+        containerTag:
+          type: string
+        validatedAt:
+          type: string
+          format: date-time
+        publishedAt:
+          type: string
+          format: date-time
+        permissions:
+          type: string
+        releaseNotes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    IdentityProvider:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        clientId:
+          type: string
+          format: uuid
+        clientSecret:
+          type: string
+        alternateClientId:
+          type: string
+          format: uuid
+        configuration:
+          type: string
+        publicKeys:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Identity:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        identityProviderId:
+          type: string
+          format: uuid
+        sub:
+          type: string
+        iat:
+          type: string
+        hd:
+          type: string
+        locale:
+          type: string
+        email:
+          type: string
+        jwt:
+          type: string
+        nofityViaEmail:
+          type: string
+        nofityViaSMS:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Platform:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        publicKey:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Logo:
+      type: object
+      xml:
+        name: logo
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        imageFileContent:
+          type: string
+          format: binary
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Screenshot:
+      type: object
+      xml:
+        name: Screenshot
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        productID:
+          type: string
+          format: uuid
+        caption:
+          type: string
+        imageFileContent:
+          type: string
+          format: binary
+        imageFileSize:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Configuration:
+      type: object
+      xml:
+        name: configuration
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        buildId:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Dependency:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        buildId:
+          type: string
+          format: uuid
+        interfaceId:
+          type: string
+          format: uuid
+        required:
+          type: boolean
+        mappings:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Exposure:
+      type: object
+      xml:
+        name: exposure
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        buildId:
+          type: string
+          format: uuid
+        interfaceId:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Task:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        configurationID:
+          type: string
+          format: uuid
+        name:
+          type: string
+        minimum:
+          type: integer
+          format: int64
+        maximum:
+          type: integer
+          format: int64
+        memory:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Entitlement:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        productLicenseId:
+          type: string
+          format: uuid
+        validFrom:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Attempt:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        claimId:
+          type: string
+          format: uuid
+        claimantId:
+          type: string
+          format: uuid
+        claimantType:
+          type: string
+        productId:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Appointment:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        entryId:
+          type: string
+          format: uuid
+        entryType:
+          type: string
+        roleId:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Claim:
+      type: object
+      xml:
+        name: identityProvider
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        claimantId:
+          type: string
+          format: uuid
+        claimantType:
+          type: string
+        entitlementId:
+          type: string
+          format: uuid
+        authorizationCount:
+          type: string
+        authorizedAt:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

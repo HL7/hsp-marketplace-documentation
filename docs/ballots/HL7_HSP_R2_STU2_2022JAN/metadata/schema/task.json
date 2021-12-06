@@ -1,0 +1,92 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://marketplace-schema.logicahealth.org/task.json",
+    "title": "Runtime Task Schema for Marketplace Products",
+    "description": "The schema file used by HL7 Marketplace-compliant products to declare injectable runtime configuration fields.",
+    "type": "object",
+    "required": [
+        "id",
+        "configuration_id",
+        "label"
+    ],
+    "properties": {
+        "id": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "configuration_id": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "label": {
+            "type": "string",
+            "description": "Human-readable name used for user presentation."
+        },
+        "memory_minimum": {
+            "type": "number",
+            "description": "Minimum memory (in MiB) required for the task to function at runtime.",
+            "minimum": 1
+        },
+        "memory_maximum": {
+            "type": "number",
+            "description": "Maximum memory (in MiB) the task may allocate at runtime.",
+            "minimum": 1
+        },
+        "instances_minimum": {
+            "type": "number",
+            "description": "The fewest instances (inclusive) of the task required at runtime.",
+            "minimum": 0
+        },
+        "instances_maximum": {
+            "type": "number",
+            "description": "The largest allowable number of instances (inclusive) of the task allowed at runtime. Default: unlimited",
+            "minimum": 0
+        },
+        "options": {
+            "type": "array",
+            "description": "Static parameters passed into the task at runtime. E.g. ['--mode', 'production']",
+            "items": {
+                "type": "string"
+            }
+        },
+        "ports": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+        "cron": {
+            "type": "string",
+            "description": "cron schedule in `* * * * *` format for periodic tasks. See https://codebeautify.org/crontab-format for syntax"
+        },
+        "environment": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/environment_variable"
+            }
+        }
+    },
+    "$defs": {
+        "environment_variable": {
+            "type": "object",
+            "required": [
+                "key",
+                "description"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "default": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

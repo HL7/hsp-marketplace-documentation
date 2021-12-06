@@ -1,0 +1,40 @@
+site_name: Health Services Platform (HSP) Marketplace
+
+theme:
+  name: 'material'
+  logo: 'images/LOGICA_MARK_NOBCKGRND.png'
+  favicon: 'images/favicon.ico'
+  palette:
+    primary: 'grey'
+    accent: 'red'
+
+nav:
+- Home: 'index.md'
+# - Ballots:
+- Release 2 STU2: 
+  - Health Services Platform Marketplace : 'ballots/HL7_HSP_R2_STU2_2022JAN/index.md'
+  - License Information : 'ballots/HL7_HSP_R2_STU2_2022JAN/license.md'
+  - Executive Summary : 'ballots/HL7_HSP_R2_STU2_2022JAN/executive_summary.md'
+  - Core Concepts :  'ballots/HL7_HSP_R2_STU2_2022JAN/core_concepts.md'      
+  - Digital Rights Management :  'ballots/HL7_HSP_R2_STU2_2022JAN/digital_rights_management.md'      
+  - Product Packaging : 'ballots/HL7_HSP_R2_STU2_2022JAN/product_packaging.md'  
+  - Runtime Telemetry : 'ballots/HL7_HSP_R2_STU2_2022JAN/runtime_telemetry.md'  
+  - Functional Infrastructure Model : 'ballots/HL7_HSP_R2_STU2_2022JAN/functional_infrastructure_model.md'  
+  - Model Quick Reference : 'ballots/HL7_HSP_R2_STU2_2022JAN/model_quick_reference.md'        
+  - API &amp; PIM : 'ballots/HL7_HSP_R2_STU2_2022JAN/api.md'
+  - Reference implementation : 'ballots/HL7_HSP_R2_STU2_2022JAN/reference_implementation.md'
+  - Reference Standards : 'ballots/HL7_HSP_R2_STU2_2022JAN/reference_standards.md'   
+  # - 2 STU1: 
+  #   - Health Services Platform Marketplace : 'ballots/HL7_HSP_R2_STU1_2019SEP/index.md'
+  #   - License Information : 'ballots/HL7_HSP_R2_STU1_2019SEP/license.md'
+  #   - Executive Summary : 'ballots/HL7_HSP_R2_STU1_2019SEP/executive_summary.md'
+  #   - Core Concepts :  'ballots/HL7_HSP_R2_STU1_2019SEP/core_concepts.md'      
+  #   - Digital Rights Management :  'ballots/HL7_HSP_R2_STU1_2019SEP/digital_rights_management.md'      
+  #   - Functional Infrastructure Model : 'ballots/HL7_HSP_R2_STU1_2019SEP/functional_infrastructure_model.md'  
+  #   - Reference implementation : 'ballots/HL7_HSP_R2_STU1_2019SEP/reference_implementation.md'
+  #   - Reference Standards : 'ballots/HL7_HSP_R2_STU1_2019SEP/reference_standards.md'    
+  #   - Model Quick Reference : 'ballots/HL7_HSP_R2_STU1_2019SEP/model_quick_reference.md'        
+  #   - API : 'ballots/HL7_HSP_R2_STU1_2019SEP/api.md'
+  # - 1.0 Informative: 'ballots/HL7_V3_HSP_R1_I1_2019JAN/index.md'
+
+copyright: © 2019-2022 HL7 & Logica <p>  <img width="60px" align="left" alt="HL7 International" src="/images/hl7-logo.png" />&nbsp;<img width="60px" align="left" alt="Logica Health" src="/images/LOGICA LOGO COLOR 2.png" /> </p><br/> 

@@ -1,0 +1,54 @@
+{
+    "$schema": "./../schema/build.json",
+    "marketplace_url": "https://marketplace-server.logicahealth.org",
+    "product": {
+        "uuid": "bc0e9854-7de2-48a7-9de2-f1b481b477b8",
+        "build": {
+            "uuid": "5d49a845-1f0b-4e87-82ee-d45fff86a4d1",
+            "binary": {
+                "registry": "https://index.docker.io/v1/",
+                "image": "p3000/marketplace-product-build-example-static-content:latest"
+            },
+            "dependency": []
+        },
+        "facts": {
+            "name": "Static Content Product Example",
+            "data_access": [],
+            "customer_service": [],
+            "runtime_dependencies": [],
+            "networking": [],
+            "organization": [],
+            "stewards": [],
+            "licensing": [],
+            "technology_mime_type": "",
+            "domain": [],
+            "cybersecurity": [],
+            "identify_and_access_management": []
+        }
+    },
+    "configuration": [{
+        "default": true,
+        "task": [{
+            "id": "7d49a845-1f0b-4e87-82ee-d45fff86a4d1",
+            "configuration_id": "5d43a845-1f0b-4e87-82ee-d45fff86a4d1",
+            "label": "My Content Service",
+            "memory_minimum": 128,
+            "memory_maximum": 256,
+            "instances_minimum": 1,
+            "options": [],
+            "ports": [
+                80
+            ],
+            "environment": [{
+                "key": "OPENTELEMETRY_COLLECTOR_URL",
+                "required": true,
+                "description": "OpenTelemetry endpoint for billing, metrics, logging, and product improvement."
+            }]
+        }]
+    }],
+    "provenance": [{
+        "datetime": "2021-11-30 15:18:37.743234 -0700",
+        "attribution": "Vicky Vickerson",
+        "remark": "Submitted for review"
+    }]
+}

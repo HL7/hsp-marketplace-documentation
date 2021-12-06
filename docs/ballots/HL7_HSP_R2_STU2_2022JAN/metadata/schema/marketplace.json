@@ -1,0 +1,692 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://marketplace-schema.logicahealth.org/marketplace",
+    "definitions": {
+        "interface": {
+            "type": "object",
+            "xml": {
+                "name": "Interface"
+            },
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "ordinal": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "user": {
+            "type": "object",
+            "xml": {
+                "name": "User"
+            },
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "familyName": {
+                    "type": "string"
+                },
+                "givenName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "format": "email"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "role": {
+            "type": "object",
+            "xml": {
+                "name": "role"
+            },
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "group": {
+            "type": "object",
+            "xml": {
+                "name": "group"
+            },
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "license": {
+            "type": "object",
+            "xml": {
+                "name": "license"
+            },
+            "required": [
+                "name",
+                "license",
+                "terms"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string",
+                    "format": "url"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "license": {
+                    "type": "string",
+                    "format": "url"
+                },
+                "terms": {
+                    "type": "string"
+                }
+            }
+        },
+        "product": {
+            "type": "object",
+            "xml": {
+                "name": "product"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "uri": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "support": {
+                    "type": "string"
+                },
+                "license": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "approved_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "visible_from": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "blob": {
+                    "type": "string",
+                    "format": "binary"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "build": {
+            "type": "object",
+            "xml": {
+                "name": "build"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "software_version": {
+                    "type": "string"
+                },
+                "build_version": {
+                    "type": "string"
+                },
+                "container_repository": {
+                    "type": "string"
+                },
+                "container_tag": {
+                    "type": "string"
+                },
+                "validated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "published_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "permissions": {
+                    "type": "string"
+                },
+                "release_notes": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "identity_provider": {
+            "type": "object",
+            "xml": {
+                "name": "identityProvider"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "client_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "clientSecret": {
+                    "type": "string"
+                },
+                "alternateClient_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "configuration": {
+                    "type": "string"
+                },
+                "publicKeys": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "identity": {
+            "type": "object",
+            "xml": {
+                "name": "identity"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "user_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "identity_provider_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "sub": {
+                    "type": "string"
+                },
+                "iat": {
+                    "type": "string"
+                },
+                "hd": {
+                    "type": "string"
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "jwt": {
+                    "type": "string"
+                },
+                "nofityViaEmail": {
+                    "type": "string"
+                },
+                "nofityViaSMS": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "platform": {
+            "type": "object",
+            "xml": {
+                "name": "platform"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "public_key": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "logo": {
+            "type": "object",
+            "xml": {
+                "name": "logo"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "image_file_content": {
+                    "type": "string",
+                    "format": "binary"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "screenshot": {
+            "type": "object",
+            "xml": {
+                "name": "Screenshot"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "product_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "image_file_content": {
+                    "type": "string",
+                    "format": "binary"
+                },
+                "image_file_size": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "configuration": {
+            "type": "object",
+            "xml": {
+                "name": "configuration"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "build_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+
+        "exposure": {
+            "type": "object",
+            "xml": {
+                "name": "exposure"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "build_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "interface_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "entitlement": {
+            "type": "object",
+            "xml": {
+                "name": "entitlement"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "user_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "product_license_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "valid_from": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "attempt": {
+            "type": "object",
+            "xml": {
+                "name": "attempt"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "claim_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "claimant_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "claimant_type": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "appointment": {
+            "type": "object",
+            "xml": {
+                "name": "appointment"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "entry_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "entry_type": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "claim": {
+            "type": "object",
+            "xml": {
+                "name": "claim"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "claimant_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "claimant_type": {
+                    "type": "string"
+                },
+                "entitlement_id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "authorization_count": {
+                    "type": "string"
+                },
+                "authorized_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "voucher": {
+            "type": "object",
+            "xml": {
+                "name": "voucher"
+            },
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "token": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "entitlement_id": {
+                    "type": "string",
+                    "format": "uuid"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,182 @@
+{
+    "$schema": "../schema/build.json",
+    "marketplace_url": "https://marketplace-server.logicahealth.org",
+    "product": {
+        "uuid": "bc0e9854-7de2-48a7-9de2-f1b481b99998",
+        "build": {
+            "uuid": "5d49a845-1f0b-4e87-82ee-d4511186a4d1",
+            "binary": {
+                "registry": "https://index.docker.io/v1/",
+                "image": "p3000/marketplace-product-build-example-cds-hooks:latest"
+            },
+            "dependency": []
+        },
+        "facts": {
+            "name": "Example Opioid Prescribing CDS Service",
+            "organization": [{
+                    "contact": "N/A - Example Only",
+                    "name": "Centers for Disease Control and Prevention (CDC)"
+                },
+                {
+                    "contact": "N/A - Example Only",
+                    "name": "Office of the National Coordinator for Health IT (ONC) "
+                }
+            ],
+            "stewards": [{
+                    "name": "Alice Anderson (Fake), PhD",
+                    "role": "endorser"
+                },
+                {
+                    "name": "Bob Buchanon (Fake), MD",
+                    "role": "endorser"
+                }
+            ],
+            "licensing": [{
+                "name": "Creative Commons license",
+                "url": "https://github.com/cqframework/opioid-cds/blob/master/LICENSE.md"
+            }],
+            "pricing": [{
+                    "name": "Evaluation",
+                    "kind": "trial",
+                    "rate": "0",
+                    "measure": "invocation"
+                },
+                {
+                    "name": "Upfront Purchase",
+                    "kind": "upfront",
+                    "rate": "10000",
+                    "measure": "access"
+                },
+                {
+                    "name": "Maintenance",
+                    "kind": "maintenance",
+                    "rate": "2000",
+                    "measure": "access"
+                }
+            ],
+            "technology_mime_type": "CQL",
+            "domain": [
+                "Clinical Decision Support",
+                "Prescribing Opioids"
+            ],
+            "cybersecurity": [{
+                "control": "graphite://cybersecurity/controls/29823-2dae0977-fd135",
+                "remark": "requirement waived"
+            }],
+            "customer_service": [{
+                "service": "forum",
+                "url": "https://chat.fhir.org/#narrow/stream/179220-cql",
+                "terms": "as available"
+            }],
+            "data_access": [{
+                    "label": "FHIR R4",
+                    "uri": "https://hl7.org/fhir/R4/"
+                },
+                {
+                    "label": "OMTKData Library Opioid Management Terminology Knowledge (OMTK) Data Library",
+                    "uri": "graphite://interfaces/data/bc0e9854-7de2-48a7-9de2-f1b481b99998"
+                },
+                {
+                    "label": "OMTKLogic Library Opioid Management Terminology Knowledge (OMTK) Logic Library",
+                    "uri": "graphite://interfaces/data/bc0e9854-7de2-48a7-9de2-f1b481b99998"
+                },
+                {
+                    "label": "OpioidCDS_Common Library Opioid Common Library"
+                },
+                {
+                    "label": "OpioidCDS_REC_10_Patient_View Library Opioid Recommendation #10 (Patient View Version) Library"
+                },
+                {
+                    "label": "OpioidCDS_REC_11_Patient_View Library Opioid Recommendation #11 (Patient View Version) Library"
+                },
+                {
+                    "label": "PlanDefinition_Recommendation_10_Patient_View (v0.1.0) PlanDefinition Opioid Recommendation #10 (Patient View Version) PlanDefinition"
+                },
+                {
+                    "label": "PlanDefinition_Recommendation_11_Patient_view (v0.1.0) PlanDefinition Opioid Recommendation #11 (Patient View Version) PlanDefinition"
+                },
+                {
+                    "label": "Terminologies ValueSet Value sets referenced by the CQL in the Opioid Logic recommendations"
+                }
+            ],
+            "identify_and_access_management": [{
+                "name": "CDS Hooks authn/authz protocols"
+            }],
+            "runtime_dependencies": [{
+                "uuid": "",
+                "build": [],
+                "name": "cqf-ruler"
+            }],
+            "networking": [{
+                "name": "CDN Static Asset",
+                "uri": "https://cdn/asset"
+            }]
+        }
+    },
+    "configuration": [{
+        "default": true,
+        "task": [{
+                "id": "7d49a845-1f0b-4e87-82ee-d45fff86a4d1",
+                "configuration_id": "5d43a845-1f0b-4e87-82ee-d45fff86a4d1",
+                "label": "Opioid Prescribing Support SMART on FHIR Application",
+                "memory_minimum": 128,
+                "memory_maximum": 256,
+                "instances_minimum": 1,
+                "options": [],
+                "ports": [
+                    80
+                ],
+                "environment": [{
+                        "key": "OPENTELEMETRY_COLLECTOR_URL",
+                        "required": true,
+                        "description": "OpenTelemetry endpoint for billing, metrics, logging, and product improvement.",
+                        "pattern": "https?:\/\/.+"
+                    },
+                    {
+                        "key": "LOGGING",
+                        "required": false,
+                        "description": "hapi.fhir.cql_logging_enabled=true"
+                    },
+                    {
+                        "key": "FIREBASE",
+                        "required": false,
+                        "description": "firebaseconfigurations"
+                    }
+                ]
+            },
+            {
+                "id": "7d49a845-1f0b-4e87-82ee-d45fff890a4d1",
+                "label": "Opioid Prescribing Restart",
+                "memory_minimum": 128,
+                "memory_maximum": 256,
+                "instances_minimum": 1,
+                "options": [],
+                "ports": [
+                    80
+                ],
+                "cron": "At 00:00",
+                "environment": [{
+                        "key": "LOGGING",
+                        "required": false,
+                        "description": "hapi.fhir.cql_logging_enabled=true"
+                    },
+                    {
+                        "key": "CQLTERMINOLOGY",
+                        "required": false,
+                        "description": "http://build.fhir.org/ig/cqframework/opioid-cds-r4/quick-start-bundles/opioid-cds-terminology-bundle.json"
+                    },
+                    {
+                        "key": "CQLCONTENTY",
+                        "required": false,
+                        "description": "http://build.fhir.org/ig/cqframework/opioid-cds-r4/quick-start-bundles/opioid-cds-content-bundle.json"
+                    }
+                ]
+            }
+        ]
+    }],
+    "provenance": [{
+        "datetime": "2021-11-30 15:18:37.743234 -0700",
+        "attribution": "Vicky Vickerson",
+        "remark": "Submitted for review"
+    }]
+}

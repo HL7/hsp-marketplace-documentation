@@ -1,0 +1,47 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://marketplace-schema.logicahealth.org/dependency.json",
+    "title": "Marketplace Product Build Metadata Schema for Applications and Content",
+    "description": "The SoF product metadata file used by Graphite Marketplace and all marketplaces compliant with HL7 Marketplace product packaging specifications",
+    "type": "object",
+    "required": [
+        "uuid",
+        "build"
+    ],
+    "properties": {
+        "uuid": {
+            "description": "Product UUID of the thing this is dependent upon.",
+            "type": "string"
+        },
+        "build": {
+            "type": "array",
+            "description": "Permitted set of build UUIDs that will satisfy the dependency.",
+            "items": {
+                "type": "string",
+                "description": "An explicit build UUID that willproduct dependency."
+            }
+        },
+        "id": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "interface_id": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "required": {
+            "type": "boolean"
+        },
+        "mappings": {
+            "type": "string"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "updated_at": {
+            "type": "string",
+            "format": "date-time"
+        }
+    }
+}

@@ -1,0 +1,270 @@
+@@startuml pim
+skinparam backgroundcolor AntiqueWhite
+skinparam classBackgroundColor Wheat|CornflowerBlue
+
+title "Platform Independent Model (PIM)"
+
+class Group {
+    UUID id
+    String name
+    String description
+}
+
+Group <--* Appointment
+
+
+class Membership {
+    UUID id
+    String user_id
+    String group_id
+}
+Membership <--* Group
+Membership <--* User
+
+class IdentityProvider {
+    UUID id
+    String name
+    String issuer
+    String client_id
+    String client_secret
+    String alternate_client_id
+    JSON configuration
+    JSON public_keys
+}
+IdentityProvider   *-->   Identity
+
+class User {
+    UUID id
+    String family_name
+    String given_name
+    String email
+}
+
+User *--> Identity 
+User  *-->  Platform
+User  o-->  Product
+
+class Identity{
+    UUID id
+    UUID user_id
+    UUID provider_id
+    String subject
+    String issued_at
+
+}
+
+class Platform {
+    UUID id
+    String name
+    String agent_public_key
+}
+
+class Instance {
+    UUID id
+    UUID platform_id
+    UUID build_id
+    JSON launch_bindings
+    DateTime deployed_at
+}
+Instance <--* Build
+Instance <--* Platform
+
+class Role {
+    UUID id
+    String name
+    JSON permissions 
+}
+
+class Appointment {
+    UUID id
+    UUID role_id
+    UUID entity_id
+    String entity_type
+}
+Role  *--> Appointment
+User  *-->  Appointment
+User *--> Entitlement
+
+class License {
+    UUID id
+    String name
+    String description
+    String url
+    Integer expiry
+    DateTime expires_at
+    Integer days_valid
+    Integer uses
+}
+
+class ProductLicense {
+    UUID id
+    UUID product_id
+    UUID license_id
+}
+
+ProductLicense <--* Product
+ProductLicense <--* License
+ProductLicense *--> Entitlement
+
+class Product {
+    UUID id
+    String name
+    String description
+    URI uri
+    URL support_url
+    UUID license_id
+    DateTime approved_at
+    DateTime visible_from
+    Binary logo
+}
+
+class SubProduct {
+    UUID id
+    UUID parent_id
+    UUID child_id
+}
+
+Product *--> SubProduct
+Product *--> SubProduct
+
+Build <--* Product
+
+class Screenshot{
+    UUID id
+    String caption
+    String mime_type
+    Binary data
+}
+Product *--> Screenshot
+
+class Build {
+    UUID id
+    String software_version
+    String build_version
+    String container_repository
+    String container_tag
+    DateTime validated_at
+    DateTime published_at
+    JSON permissions
+    String release_notes
+}
+
+Build *-->  Configuration
+
+class Dependency {
+    UUID id  
+    UUID build_id
+    UUID interface_id
+}
+
+Product *--> Dependency
+
+class Parameter  {
+    UUID id
+    UUID exposure_id
+    String name
+    Boolean required
+}
+Parameter <--* Exposure
+
+class Configuration  {
+    UUID id
+    UUID build_id
+    String name
+}
+
+class Task  {
+    UUID id
+    String name
+    Integer minimum
+    Integer maximum
+    Integer memory_minimum
+    Integer memory_maximum  
+}
+Task <--*  Configuration
+
+class Instance 
+ {
+    UUID id
+    String launch_binding
+    String deployed_at
+
+  
+}
+
+class Interface {
+    UUID id
+    String name
+    URL uri
+    String version
+    Integer ordinal
+}
+Interface <--o Surrogate
+Interface <--o Surrogate
+Exposure <--* Product
+Exposure <--o Interface
+Dependency <--o Interface
+
+class Surrogate   {
+    UUID id
+    UUID of_id
+    UUID for_id
+}
+
+class Entitlement  {
+    UUID id
+    UUID product_license_id
+    UUID user_id
+    DateTime valid_from
+}
+Entitlement <--o Claim
+User <--o Claim
+Group <--o Claim
+
+class Claim {
+    UUID id
+    UUID claimant_id
+    String claimant_type
+    UUID entitlement_id
+    Integer authorization_count
+    DateTime authorized_at
+}
+
+Entitlement o--> Voucher
+
+class Voucher  {
+    UUID id
+    UUID product_license_id
+    String code
+    UUID entitlement_id
+    DateTime issued_at
+    DateTime redeemed_at
+    UUID redeemed_by
+    
+}
+
+class Attempt {
+    UUID id
+    UUID product_id
+    UUID claimant_id
+    String claimant_type
+}
+Attempt <--o User
+Attempt <--o Group
+
+class Exposure  {
+    UUID id
+    UUID build_id
+    UUID interface_id
+}
+
+class Binding  {
+    UUID id
+    UUID dependency_id
+    String of
+    String to
+  
+}
+Binding <--* Dependency
+
+@@enduml

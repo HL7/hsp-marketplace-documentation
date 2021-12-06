@@ -1,0 +1,283 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://marketplace-schema.logicahealth.org/label.json",
+    "type": "object",
+    "properties": {
+
+        "product": {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "build": {
+                    "type": "object",
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "binary": {
+                            "type": "object",
+                            "properties": {
+                                "registry": {
+                                    "type": "string",
+                                    "format": "uri"
+                                },
+                                "image": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "registry",
+                                "image"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "uuid",
+                        "binary",
+                        "dependency"
+                    ]
+                },
+                "facts": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "organization": {
+                            "type": "array",
+                            "items": [{
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "stewards": {
+                            "type": "array",
+                            "items": [{
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "role": {
+                                            "enum": [
+                                                "endorsement",
+                                                "curator"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "role"
+                                    ]
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "role": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "role"
+                                    ]
+                                }
+                            ]
+                        },
+                        "licensing": {
+                            "type": "array",
+                            "items": [{
+                                "$ref": "./marketplace.json#/definitions/license"
+                            }]
+
+                        },
+                        "pricing": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "usage": {
+                                        "enum": [
+                                            "Trial Use",
+                                            "Upfront Charge",
+                                            "Usage Charge",
+                                            "Maintainence"
+                                        ]
+                                    },
+                                    "terms": {
+                                        "type": "string"
+                                    },
+                                    "unit": {
+                                        "enum": [
+                                            "cpu_core",
+                                            "gpu_core",
+                                            "ram_gib",
+                                            "invocation",
+                                            "hour",
+                                            "count"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "usage",
+                                    "terms"
+                                ],
+                                "anyOf": [{
+                                    "properties": {
+                                        "name": {
+                                            "const": "Usage Charge"
+                                        }
+                                    },
+                                    "required": [
+                                        "unit"
+                                    ]
+                                }]
+                            }]
+                        },
+                        "technology_mime_type": {
+                            "type": "string"
+                        },
+                        "domain": {
+                            "type": "array",
+                            "items": [{
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "cybersecurity": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "terms": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "type",
+                                    "terms"
+                                ]
+                            }]
+                        },
+                        "customer_service": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "service": {
+                                        "enum": [
+                                            "phone",
+                                            "email",
+                                            "listserve"
+                                        ]
+                                    },
+                                    "terms": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "service",
+                                    "terms"
+                                ]
+                            }]
+                        },
+                        "data_access": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "label": {
+                                        "type": "string"
+                                    },
+                                    "uri": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    }
+                                },
+                                "required": [
+                                    "label",
+                                    "uri"
+                                ]
+                            }]
+                        },
+                        "identify_and_access_management": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ]
+                            }]
+                        },
+                        "runtime_dependency": {
+                            "type": "array",
+                            "description": "Optional set of runtime dependencies.",
+                            "items": {
+                                "$ref": "./dependency.json"
+                            }
+                        },
+                        "networking": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "url"
+                                ]
+                            }]
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "organization",
+                        "stewards",
+                        "licensing",
+                        "technology_mime_type",
+                        "domain",
+                        "cybersecurity",
+                        "customer_service",
+                        "data_access",
+                        "identify_and_access_management",
+                        "runtime_dependencies",
+                        "networking"
+                    ]
+                }
+            },
+            "required": [
+                "uuid",
+                "build",
+                "facts"
+            ]
+        }
+
+    }
+}

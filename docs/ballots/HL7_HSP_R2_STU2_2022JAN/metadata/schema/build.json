@@ -1,0 +1,461 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://marketplace-schema.logicahealth.org/build.json",
+    "title": "Marketplace Product Build Metadata Schema for Applications and Computable Content",
+    "description": "The product metadata file used by Graphite Marketplace and all marketplaces compliant with HL7 Marketplace specification.",
+    "type": "object",
+    "required": [
+        "marketplace_url",
+        "product",
+        "configuration",
+        "provenance"
+    ],
+    "properties": {
+        "marketplace_url": {
+            "type": "string",
+            "description": "Root endpoint used for resolving references as well as runtime product authorization."
+        },
+        "product": {
+            "type": "object",
+            "description": "Set of runtime tasks necessary to run this product build.",
+            "minItems": 1,
+            "required": [
+                "uuid",
+                "build",
+                "facts"
+            ],
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "build": {
+                    "type": "object",
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "binary": {
+                            "type": "object",
+                            "properties": {
+                                "registry": {
+                                    "type": "string",
+                                    "format": "uri"
+                                },
+                                "image": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "registry",
+                                "image"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "uuid",
+                        "binary",
+                        "dependency"
+                    ]
+                },
+                "facts": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "organization": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "contact": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ]
+                            }]
+                        },
+                        "stewards": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "enum": [
+                                            "endorser",
+                                            "curator"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "role"
+                                ]
+                            }]
+                        },
+                        "licensing": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "xml": {
+                                    "name": "license"
+                                },
+                                "required": [
+                                    "name",
+                                    "url"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "format": "url"
+                                    }
+                                }
+                            }]
+                        },
+                        "pricing": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "kind": {
+                                        "enum": [
+                                            "trial",
+                                            "upfront",
+                                            "meter",
+                                            "maintainence"
+                                        ]
+                                    },
+                                    "rate": {
+                                        "type": "string"
+                                    },
+                                    "measure": {
+                                        "enum": [
+                                            "cpu_core",
+                                            "gpu_core",
+                                            "ram_gib",
+                                            "invocation",
+                                            "access",
+                                            "hour",
+                                            "custom"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "kind",
+                                    "rate",
+                                    "measure"
+                                ]
+                            }]
+                        },
+                        "technology_mime_type": {
+                            "type": "string"
+                        },
+                        "domain": {
+                            "type": "array",
+                            "items": [{
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "cybersecurity": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "control": {
+                                        "type": "string",
+                                        "format": "url",
+                                        "description": "URI of a relevant cybersecurity control identifier."
+                                    },
+                                    "remark": {
+                                        "type": "string",
+                                        "description": "Notes relevant to compliance with the given contrel identifier."
+                                    }
+                                },
+                                "required": [
+                                    "control",
+                                    "remark"
+                                ]
+                            }]
+                        },
+                        "customer_service": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "service": {
+                                        "enum": [
+                                            "phone",
+                                            "email",
+                                            "forum"
+                                        ]
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "format": "url"
+                                    },
+                                    "terms": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "service",
+                                    "url",
+                                    "terms"
+                                ]
+                            }]
+                        },
+                        "data_access": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "label": {
+                                        "type": "string"
+                                    },
+                                    "uri": {
+                                        "type": "string",
+                                        "format": "uri"
+                                    }
+                                },
+                                "required": [
+                                    "label",
+                                    "uri"
+                                ]
+                            }]
+                        },
+                        "identify_and_access_management": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ]
+                            }]
+                        },
+                        "runtime_dependencies": {
+                            "type": "array",
+                            "description": "Optional set of runtime dependencies.",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "uuid",
+                                    "build"
+                                ],
+                                "properties": {
+                                    "uuid": {
+                                        "description": "Product UUID of the thing this is dependent upon.",
+                                        "type": "string"
+                                    },
+                                    "build": {
+                                        "type": "array",
+                                        "description": "Permitted set of build UUIDs that will satisfy the dependency.",
+                                        "items": {
+                                            "type": "string",
+                                            "description": "An explicit build UUID that willproduct dependency."
+                                        }
+                                    },
+                                    "interface_id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "required": {
+                                        "type": "boolean"
+                                    },
+                                    "mappings": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "networking": {
+                            "type": "array",
+                            "items": [{
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "uri": {
+                                        "type": "string",
+                                        "format": "url"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "uri"
+                                ]
+                            }]
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "organization",
+                        "stewards",
+                        "licensing",
+                        "technology_mime_type",
+                        "domain",
+                        "cybersecurity",
+                        "customer_service",
+                        "data_access",
+                        "identify_and_access_management",
+                        "runtime_dependencies",
+                        "networking"
+                    ]
+                }
+            }
+        },
+        "configuration": {
+            "type": "array",
+            "description": "Set of runtime tasks necessary to run this product build.",
+            "minItems": 1,
+            "items": {
+                "required": [
+                    "default",
+                    "task"
+                ],
+                "properties": {
+                    "default": {
+                        "type": "boolean"
+                    },
+                    "task": {
+                        "type": "array",
+                        "description": "Specific set of runtime tasks necessary to run a configuration.",
+                        "minItems": 1,
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "id",
+                                "label"
+                            ],
+                            "properties": {
+                                "configuration_id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                },
+                                "label": {
+                                    "type": "string",
+                                    "description": "Human-readable name used for user presentation."
+                                },
+                                "memory_minimum": {
+                                    "type": "number",
+                                    "description": "Minimum memory (in MiB) required for the task to function at runtime.",
+                                    "minimum": 1
+                                },
+                                "memory_maximum": {
+                                    "type": "number",
+                                    "description": "Maximum memory (in MiB) the task may allocate at runtime.",
+                                    "minimum": 1
+                                },
+                                "instances_minimum": {
+                                    "type": "number",
+                                    "description": "The fewest instances (inclusive) of the task required at runtime.",
+                                    "minimum": 0
+                                },
+                                "instances_maximum": {
+                                    "type": "number",
+                                    "description": "The largest allowable number of instances (inclusive) of the task allowed at runtime. Default: unlimited",
+                                    "minimum": 0
+                                },
+                                "options": {
+                                    "type": "array",
+                                    "description": "Static parameters passed into the task at runtime. E.g. ['--mode', 'production']",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "ports": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number"
+                                    }
+                                },
+                                "cron": {
+                                    "type": "string",
+                                    "description": "cron schedule in `* * * * *` format for periodic tasks. See https://codebeautify.org/crontab-format for syntax"
+                                },
+                                "environment": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "key",
+                                            "description"
+                                        ],
+                                        "properties": {
+                                            "key": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "required": {
+                                                "type": "boolean"
+                                            },
+                                            "default": {
+                                                "type": "string"
+                                            },
+                                            "pattern": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        },
+        "provenance": {
+            "type": "array",
+            "description": "Historical records of ownership and transfer.",
+            "minItems": 0,
+            "items": {
+                "required": [
+                    "datetime",
+                    "remark",
+                    "attribution"
+                ],
+                "properties": {
+                    "datetime": {
+                        "type": "string",
+                        "format": "datetime"
+                    },
+                    "remark": {
+                        "type": "string"
+                    },
+                    "attribution": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
